@@ -113,6 +113,7 @@
 //! [twitter]: https://twitter.com/ldesgoui
 
 #![doc(html_root_url = "https://docs.rs/discord_game_sdk/1.0.1")]
+#![allow(clippy::upper_case_acronyms, clippy::from_over_into)]
 
 mod action;
 mod activity;

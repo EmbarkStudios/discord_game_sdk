@@ -67,8 +67,9 @@ impl<'d, E> Discord<'d, E> {
     /// # Ok(()) }
     /// ```
     pub fn validate_or_exit(&self, callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>)) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.application_manager();
@@ -104,7 +105,7 @@ impl<'d, E> Discord<'d, E> {
             move |discord, res: sys::EDiscordResult, token: *mut sys::DiscordOAuth2Token| {
                 callback(
                     discord,
-                    res.to_result()
+                    res.into_result()
                         .map(|()| unsafe { &*(token as *mut OAuth2Token) }),
                 )
             },
@@ -139,7 +140,7 @@ impl<'d, E> Discord<'d, E> {
             move |discord, res: sys::EDiscordResult, string: *const u8| {
                 callback(
                     discord,
-                    res.to_result()
+                    res.into_result()
                         .map(|()| unsafe { utils::charptr_to_str(string) }),
                 )
             },

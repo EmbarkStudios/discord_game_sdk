@@ -92,19 +92,19 @@ impl LobbyTransaction {
 
     pub(crate) unsafe fn process(&self, tx: *mut sys::IDiscordLobbyTransaction) -> Result<()> {
         if let Some(kind) = self.kind {
-            (*tx).set_type.unwrap()(tx, kind.into()).to_result()?;
+            (*tx).set_type.unwrap()(tx, kind.into()).into_result()?;
         }
 
         if let Some(user_id) = self.owner {
-            (*tx).set_owner.unwrap()(tx, user_id).to_result()?;
+            (*tx).set_owner.unwrap()(tx, user_id).into_result()?;
         }
 
         if let Some(capacity) = self.capacity {
-            (*tx).set_capacity.unwrap()(tx, capacity).to_result()?;
+            (*tx).set_capacity.unwrap()(tx, capacity).into_result()?;
         }
 
         if let Some(locked) = self.locked {
-            (*tx).set_locked.unwrap()(tx, locked).to_result()?;
+            (*tx).set_locked.unwrap()(tx, locked).into_result()?;
         }
 
         for (key, value) in &self.metadata {
@@ -117,7 +117,7 @@ impl LobbyTransaction {
                         // XXX: *mut should be *const
                         value.as_ptr() as *mut u8,
                     )
-                    .to_result()?;
+                    .into_result()?;
                 }
 
                 None => {
@@ -126,7 +126,7 @@ impl LobbyTransaction {
                         // XXX: *mut should be *const
                         key.as_ptr() as *mut u8,
                     )
-                    .to_result()?;
+                    .into_result()?;
                 }
             }
         }

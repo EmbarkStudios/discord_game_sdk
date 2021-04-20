@@ -59,7 +59,7 @@ impl<'d, E> Discord<'d, E> {
                 buffer.len().try_into().unwrap_or(u32::max_value()),
                 &mut read,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         // XXX: u32 should be u64
@@ -100,7 +100,7 @@ impl<'d, E> Discord<'d, E> {
             move |discord, res: sys::EDiscordResult, data: *mut u8, data_len: u32| {
                 callback(
                     discord,
-                    res.to_result()
+                    res.into_result()
                         .map(|()| unsafe { std::slice::from_raw_parts(data, data_len as usize) }),
                 )
             },
@@ -150,7 +150,7 @@ impl<'d, E> Discord<'d, E> {
             move |discord, res: sys::EDiscordResult, data: *mut u8, data_len: u32| {
                 callback(
                     discord,
-                    res.to_result()
+                    res.into_result()
                         .map(|()| unsafe { std::slice::from_raw_parts(data, data_len as usize) }),
                 )
             },
@@ -207,7 +207,7 @@ impl<'d, E> Discord<'d, E> {
                 // XXX: u32 should be u64
                 buffer.len().try_into().unwrap_or(u32::max_value()),
             )
-            .to_result()
+            .into_result()
         }
     }
 
@@ -249,8 +249,9 @@ impl<'d, E> Discord<'d, E> {
 
         debug_assert!(u32::try_from(buffer.len()).is_ok());
 
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.storage_manager();
@@ -292,7 +293,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.storage_manager();
 
-            (*mgr).delete_.unwrap()(mgr, filename.as_ptr()).to_result()
+            (*mgr).delete_.unwrap()(mgr, filename.as_ptr()).into_result()
         }
     }
 
@@ -324,7 +325,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.storage_manager();
 
-            (*mgr).exists.unwrap()(mgr, filename.as_ptr(), &mut exists).to_result()?;
+            (*mgr).exists.unwrap()(mgr, filename.as_ptr(), &mut exists).into_result()?;
         }
 
         Ok(exists)
@@ -356,7 +357,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.storage_manager();
 
-            (*mgr).stat.unwrap()(mgr, filename.as_ptr(), &mut stat.0).to_result()?;
+            (*mgr).stat.unwrap()(mgr, filename.as_ptr(), &mut stat.0).into_result()?;
         }
 
         Ok(stat)
@@ -397,7 +398,7 @@ impl<'d, E> Discord<'d, E> {
                 index.try_into().unwrap(),
                 &mut stat.0,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok(stat)
@@ -445,7 +446,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.storage_manager();
 
-            (*mgr).get_path.unwrap()(mgr, &mut path).to_result()?;
+            (*mgr).get_path.unwrap()(mgr, &mut path).into_result()?;
         }
 
         Ok(utils::charbuf_to_str(&path).to_string())

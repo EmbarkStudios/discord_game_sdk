@@ -92,7 +92,7 @@ impl<E> Discord<'_, E> {
                 &mut params,
                 &mut instance.inner_mut().core,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         log::trace!("received pointer to {:p}", instance.inner().core);
@@ -216,7 +216,7 @@ impl<E> Discord<'_, E> {
     /// > [Method in official docs](https://discordapp.com/developers/docs/game-sdk/discord#runcallbacks)
     // We require &mut self to prevent calling during callbacks
     pub fn run_callbacks(&mut self) -> Result<()> {
-        unsafe { (*self.inner().core).run_callbacks.unwrap()(self.inner().core).to_result() }
+        unsafe { (*self.inner().core).run_callbacks.unwrap()(self.inner().core).into_result() }
     }
 
     pub(crate) unsafe fn achievement_manager(&self) -> *mut sys::IDiscordAchievementManager {

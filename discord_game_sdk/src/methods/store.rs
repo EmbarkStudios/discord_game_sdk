@@ -30,8 +30,9 @@ impl<'d, E> Discord<'d, E> {
     /// # Ok(()) }
     /// ```
     pub fn fetch_skus(&self, callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>)) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.store_manager();
@@ -70,7 +71,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.store_manager();
 
-            (*mgr).get_sku.unwrap()(mgr, id, &mut sku.0).to_result()?;
+            (*mgr).get_sku.unwrap()(mgr, id, &mut sku.0).into_result()?;
         }
 
         Ok(sku)
@@ -115,7 +116,7 @@ impl<'d, E> Discord<'d, E> {
                 index.try_into().unwrap(),
                 &mut sku.0,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok(sku)
@@ -175,8 +176,9 @@ impl<'d, E> Discord<'d, E> {
     /// # Ok(()) }
     /// ```
     pub fn fetch_entitlements(&self, callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>)) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.store_manager();
@@ -215,7 +217,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.store_manager();
 
-            (*mgr).get_entitlement.unwrap()(mgr, id, &mut entitlement.0).to_result()?;
+            (*mgr).get_entitlement.unwrap()(mgr, id, &mut entitlement.0).into_result()?;
         }
 
         Ok(entitlement)
@@ -260,7 +262,7 @@ impl<'d, E> Discord<'d, E> {
                 index.try_into().unwrap(),
                 &mut entitlement.0,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok(entitlement)
@@ -319,7 +321,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.store_manager();
 
-            (*mgr).has_sku_entitlement.unwrap()(mgr, sku_id, &mut has_entitlement).to_result()?;
+            (*mgr).has_sku_entitlement.unwrap()(mgr, sku_id, &mut has_entitlement).into_result()?;
         }
 
         Ok(has_entitlement)
@@ -347,8 +349,9 @@ impl<'d, E> Discord<'d, E> {
         sku_id: Snowflake,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.store_manager();

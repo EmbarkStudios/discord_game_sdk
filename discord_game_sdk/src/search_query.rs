@@ -92,7 +92,7 @@ impl SearchQuery {
                 // XXX: *mut should be *const
                 value.as_ptr() as *mut u8,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         if let Some((key, value, cast)) = self.sort.as_ref() {
@@ -104,15 +104,15 @@ impl SearchQuery {
                 // XXX: *mut should be *const
                 value.as_ptr() as *mut u8,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         if let Some(limit) = self.limit {
-            (*tx).limit.unwrap()(tx, limit).to_result()?;
+            (*tx).limit.unwrap()(tx, limit).into_result()?;
         }
 
         if let Some(distance) = self.distance {
-            (*tx).distance.unwrap()(tx, distance.into()).to_result()?;
+            (*tx).distance.unwrap()(tx, distance.into()).into_result()?;
         }
 
         Ok(())

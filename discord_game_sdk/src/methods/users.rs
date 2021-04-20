@@ -28,7 +28,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.user_manager();
 
-            (*mgr).get_current_user.unwrap()(mgr, &mut user.0).to_result()?;
+            (*mgr).get_current_user.unwrap()(mgr, &mut user.0).into_result()?;
         }
 
         Ok(user)
@@ -61,7 +61,7 @@ impl<'d, E> Discord<'d, E> {
             move |discord, res: sys::EDiscordResult, user: *mut sys::DiscordUser| {
                 callback(
                     discord,
-                    res.to_result().map(|()| unsafe { &*(user as *mut User) }),
+                    res.into_result().map(|()| unsafe { &*(user as *mut User) }),
                 )
             },
         );
@@ -89,7 +89,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.user_manager();
 
-            (*mgr).get_current_user_premium_type.unwrap()(mgr, &mut premium_type).to_result()?;
+            (*mgr).get_current_user_premium_type.unwrap()(mgr, &mut premium_type).into_result()?;
         }
 
         Ok(PremiumKind::from(premium_type))
@@ -121,7 +121,7 @@ impl<'d, E> Discord<'d, E> {
                 let mgr = self.user_manager();
 
                 (*mgr).current_user_has_flag.unwrap()(mgr, flag.bits(), &mut contains)
-                    .to_result()?;
+                    .into_result()?;
             }
 
             flags.set(*flag, contains);

@@ -25,13 +25,11 @@ impl ImageHandle {
 
     /// Create new Image Handle
     pub fn from_user_id(user_id: UserID, size: u32) -> Self {
-        let mut handle = sys::DiscordImageHandle::default();
-
-        handle.type_ = ImageKind::User.into();
-        handle.id = user_id;
-        handle.size = size;
-
-        Self(handle)
+        Self(sys::DiscordImageHandle {
+            type_: ImageKind::User.into(),
+            id: user_id,
+            size,
+        })
     }
 }
 

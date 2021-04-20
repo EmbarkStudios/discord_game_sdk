@@ -40,8 +40,9 @@ impl<'d, E> Discord<'d, E> {
     ) {
         debug_assert!((0..=100).contains(&percent_complete));
 
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.achievement_manager();
@@ -73,8 +74,9 @@ impl<'d, E> Discord<'d, E> {
     /// # Ok(()) }
     /// ```
     pub fn fetch_user_achievements(&self, callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>)) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.achievement_manager();
@@ -115,7 +117,7 @@ impl<'d, E> Discord<'d, E> {
             let mgr = self.achievement_manager();
 
             (*mgr).get_user_achievement.unwrap()(mgr, achievement_id, &mut achievement.0)
-                .to_result()?;
+                .into_result()?;
         }
 
         Ok(achievement)
@@ -160,7 +162,7 @@ impl<'d, E> Discord<'d, E> {
                 index.try_into().unwrap(),
                 &mut achievement.0,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok(achievement)

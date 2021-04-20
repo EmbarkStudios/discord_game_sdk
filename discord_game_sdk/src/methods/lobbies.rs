@@ -32,7 +32,7 @@ impl<'d, E> Discord<'d, E> {
         let mut tx = std::ptr::null_mut();
 
         let create =
-            unsafe { (*mgr).get_lobby_create_transaction.unwrap()(mgr, &mut tx).to_result() };
+            unsafe { (*mgr).get_lobby_create_transaction.unwrap()(mgr, &mut tx).into_result() };
 
         if let Err(e) = create {
             return callback(self, Err(e));
@@ -46,7 +46,8 @@ impl<'d, E> Discord<'d, E> {
             move |discord, res: sys::EDiscordResult, lobby: *mut sys::DiscordLobby| {
                 callback(
                     discord,
-                    res.to_result().map(|()| unsafe { &*(lobby as *mut Lobby) }),
+                    res.into_result()
+                        .map(|()| unsafe { &*(lobby as *mut Lobby) }),
                 )
             },
         );
@@ -67,7 +68,7 @@ impl<'d, E> Discord<'d, E> {
         let mut tx = std::ptr::null_mut();
 
         let create = unsafe {
-            (*mgr).get_lobby_update_transaction.unwrap()(mgr, lobby_id, &mut tx).to_result()
+            (*mgr).get_lobby_update_transaction.unwrap()(mgr, lobby_id, &mut tx).into_result()
         };
 
         if let Err(e) = create {
@@ -78,8 +79,9 @@ impl<'d, E> Discord<'d, E> {
             return callback(self, Err(e));
         }
 
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe { (*mgr).update_lobby.unwrap()(mgr, lobby_id, tx, ptr, fun) }
     }
@@ -92,8 +94,9 @@ impl<'d, E> Discord<'d, E> {
         lobby_id: LobbyID,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.lobby_manager();
@@ -126,7 +129,8 @@ impl<'d, E> Discord<'d, E> {
             move |discord, res: sys::EDiscordResult, lobby: *mut sys::DiscordLobby| {
                 callback(
                     discord,
-                    res.to_result().map(|()| unsafe { &*(lobby as *mut Lobby) }),
+                    res.into_result()
+                        .map(|()| unsafe { &*(lobby as *mut Lobby) }),
                 )
             },
         );
@@ -168,7 +172,8 @@ impl<'d, E> Discord<'d, E> {
             move |discord, res: sys::EDiscordResult, lobby: *mut sys::DiscordLobby| {
                 callback(
                     discord,
-                    res.to_result().map(|()| unsafe { &*(lobby as *mut Lobby) }),
+                    res.into_result()
+                        .map(|()| unsafe { &*(lobby as *mut Lobby) }),
                 )
             },
         );
@@ -194,8 +199,9 @@ impl<'d, E> Discord<'d, E> {
         lobby_id: LobbyID,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.lobby_manager();
@@ -214,7 +220,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.lobby_manager();
 
-            (*mgr).get_lobby.unwrap()(mgr, lobby_id, &mut lobby.0).to_result()?;
+            (*mgr).get_lobby.unwrap()(mgr, lobby_id, &mut lobby.0).into_result()?;
         }
 
         Ok(lobby)
@@ -232,7 +238,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.lobby_manager();
 
-            (*mgr).get_lobby_activity_secret.unwrap()(mgr, lobby_id, &mut secret).to_result()?;
+            (*mgr).get_lobby_activity_secret.unwrap()(mgr, lobby_id, &mut secret).into_result()?;
         }
 
         Ok(utils::charbuf_to_str(&secret).to_string())
@@ -268,7 +274,7 @@ impl<'d, E> Discord<'d, E> {
                 key.as_ptr() as *mut u8,
                 &mut value,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok(utils::charbuf_to_str(&value).to_string())
@@ -283,7 +289,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.lobby_manager();
 
-            (*mgr).lobby_metadata_count.unwrap()(mgr, lobby_id, &mut count).to_result()?
+            (*mgr).lobby_metadata_count.unwrap()(mgr, lobby_id, &mut count).into_result()?
         }
 
         // XXX: i32 should be u32
@@ -307,7 +313,7 @@ impl<'d, E> Discord<'d, E> {
                 index.try_into().unwrap(),
                 &mut key,
             )
-            .to_result()?;
+            .into_result()?;
 
             (*mgr).get_lobby_metadata_value.unwrap()(
                 mgr,
@@ -316,7 +322,7 @@ impl<'d, E> Discord<'d, E> {
                 key.as_ptr() as *mut u8,
                 &mut value,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok((
@@ -358,7 +364,7 @@ impl<'d, E> Discord<'d, E> {
 
         let create = unsafe {
             (*mgr).get_member_update_transaction.unwrap()(mgr, lobby_id, user_id, &mut tx)
-                .to_result()
+                .into_result()
         };
 
         if let Err(e) = create {
@@ -369,8 +375,9 @@ impl<'d, E> Discord<'d, E> {
             return callback(self, Err(e));
         }
 
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe { (*mgr).update_member.unwrap()(mgr, lobby_id, user_id, tx, ptr, fun) }
     }
@@ -384,7 +391,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.lobby_manager();
 
-            (*mgr).member_count.unwrap()(mgr, lobby_id, &mut count).to_result()?;
+            (*mgr).member_count.unwrap()(mgr, lobby_id, &mut count).into_result()?;
         }
 
         // XXX: i32 should be u32
@@ -407,7 +414,7 @@ impl<'d, E> Discord<'d, E> {
                 index.try_into().unwrap(),
                 &mut user_id,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok(user_id)
@@ -463,7 +470,7 @@ impl<'d, E> Discord<'d, E> {
                 key.as_ptr() as *mut u8,
                 &mut value,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok(utils::charbuf_to_str(&value).to_string())
@@ -479,7 +486,7 @@ impl<'d, E> Discord<'d, E> {
             let mgr = self.lobby_manager();
 
             (*mgr).member_metadata_count.unwrap()(mgr, lobby_id, user_id, &mut count)
-                .to_result()?;
+                .into_result()?;
         }
 
         // XXX: i32 should be u32
@@ -509,7 +516,7 @@ impl<'d, E> Discord<'d, E> {
                 index.try_into().unwrap(),
                 &mut key,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         unsafe {
@@ -521,7 +528,7 @@ impl<'d, E> Discord<'d, E> {
                 key.as_ptr() as *mut u8,
                 &mut value,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok((
@@ -571,8 +578,9 @@ impl<'d, E> Discord<'d, E> {
 
         debug_assert!(u32::try_from(buffer.len()).is_ok());
 
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.lobby_manager();
@@ -605,7 +613,7 @@ impl<'d, E> Discord<'d, E> {
         let mgr = unsafe { self.lobby_manager() };
         let mut tx = std::ptr::null_mut();
 
-        let create = unsafe { (*mgr).get_search_query.unwrap()(mgr, &mut tx).to_result() };
+        let create = unsafe { (*mgr).get_search_query.unwrap()(mgr, &mut tx).into_result() };
 
         if let Err(e) = create {
             return callback(self, Err(e));
@@ -615,8 +623,9 @@ impl<'d, E> Discord<'d, E> {
             return callback(self, Err(e));
         }
 
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe { (*mgr).search.unwrap()(mgr, tx, ptr, fun) }
     }
@@ -656,7 +665,7 @@ impl<'d, E> Discord<'d, E> {
                 index.try_into().unwrap(),
                 &mut lobby_id,
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok(lobby_id)
@@ -690,8 +699,9 @@ impl<'d, E> Discord<'d, E> {
         lobby_id: LobbyID,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.lobby_manager();
@@ -708,8 +718,9 @@ impl<'d, E> Discord<'d, E> {
         lobby_id: LobbyID,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.lobby_manager();
@@ -727,7 +738,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.lobby_manager();
 
-            (*mgr).connect_network.unwrap()(mgr, lobby_id).to_result()
+            (*mgr).connect_network.unwrap()(mgr, lobby_id).into_result()
         }
     }
 
@@ -738,7 +749,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.lobby_manager();
 
-            (*mgr).disconnect_network.unwrap()(mgr, lobby_id).to_result()
+            (*mgr).disconnect_network.unwrap()(mgr, lobby_id).into_result()
         }
     }
 
@@ -751,7 +762,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.lobby_manager();
 
-            (*mgr).flush_network.unwrap()(mgr).to_result()
+            (*mgr).flush_network.unwrap()(mgr).into_result()
         }
     }
 
@@ -768,7 +779,7 @@ impl<'d, E> Discord<'d, E> {
             let mgr = self.lobby_manager();
 
             (*mgr).open_network_channel.unwrap()(mgr, lobby_id, channel_id, reliable.into())
-                .to_result()
+                .into_result()
         }
     }
 
@@ -797,7 +808,7 @@ impl<'d, E> Discord<'d, E> {
                 // XXX: u32 should be u64
                 buffer.len().try_into().unwrap_or(u32::max_value()),
             )
-            .to_result()
+            .into_result()
         }
     }
 }

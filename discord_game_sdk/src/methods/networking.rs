@@ -33,7 +33,7 @@ impl<E> Discord<'_, E> {
         unsafe {
             let mgr = self.network_manager();
 
-            (*mgr).flush.unwrap()(mgr).to_result()
+            (*mgr).flush.unwrap()(mgr).into_result()
         }
     }
 
@@ -58,7 +58,7 @@ impl<E> Discord<'_, E> {
         unsafe {
             let mgr = self.network_manager();
 
-            (*mgr).open_peer.unwrap()(mgr, peer_id, route.as_ptr()).to_result()
+            (*mgr).open_peer.unwrap()(mgr, peer_id, route.as_ptr()).into_result()
         }
     }
 
@@ -86,7 +86,7 @@ impl<E> Discord<'_, E> {
         unsafe {
             let mgr = self.network_manager();
 
-            (*mgr).update_peer.unwrap()(mgr, peer_id, route.as_ptr()).to_result()
+            (*mgr).update_peer.unwrap()(mgr, peer_id, route.as_ptr()).into_result()
         }
     }
 
@@ -97,7 +97,7 @@ impl<E> Discord<'_, E> {
         unsafe {
             let mgr = self.network_manager();
 
-            (*mgr).close_peer.unwrap()(mgr, peer_id).to_result()
+            (*mgr).close_peer.unwrap()(mgr, peer_id).into_result()
         }
     }
 
@@ -113,7 +113,7 @@ impl<E> Discord<'_, E> {
         unsafe {
             let mgr = self.network_manager();
 
-            (*mgr).open_channel.unwrap()(mgr, peer_id, channel_id, reliable.into()).to_result()
+            (*mgr).open_channel.unwrap()(mgr, peer_id, channel_id, reliable.into()).into_result()
         }
     }
 
@@ -128,7 +128,7 @@ impl<E> Discord<'_, E> {
         unsafe {
             let mgr = self.network_manager();
 
-            (*mgr).close_channel.unwrap()(mgr, peer_id, channel_id).to_result()
+            (*mgr).close_channel.unwrap()(mgr, peer_id, channel_id).into_result()
         }
     }
 
@@ -157,7 +157,7 @@ impl<E> Discord<'_, E> {
                 // XXX: u32 should be u64
                 buffer.len().try_into().unwrap_or(u32::max_value()),
             )
-            .to_result()
+            .into_result()
         }
     }
 }

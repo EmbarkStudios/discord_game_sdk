@@ -35,7 +35,10 @@ impl<'d, E> Discord<'d, E> {
     ) {
         let (ptr, fun) = self.two_params(
             move |discord, res: sys::EDiscordResult, image_handle: sys::DiscordImageHandle| {
-                callback(discord, res.to_result().map(|()| ImageHandle(image_handle)))
+                callback(
+                    discord,
+                    res.into_result().map(|()| ImageHandle(image_handle)),
+                )
             },
         );
 
@@ -55,7 +58,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.image_manager();
 
-            (*mgr).get_dimensions.unwrap()(mgr, handle.0, &mut dimensions).to_result()?;
+            (*mgr).get_dimensions.unwrap()(mgr, handle.0, &mut dimensions).into_result()?;
         }
 
         Ok((dimensions.width, dimensions.height))
@@ -81,7 +84,7 @@ impl<'d, E> Discord<'d, E> {
                 data.as_mut_ptr(),
                 data.len().try_into().unwrap_or(u32::max_value()),
             )
-            .to_result()?;
+            .into_result()?;
         }
 
         Ok(Image {

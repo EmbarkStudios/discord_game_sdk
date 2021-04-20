@@ -38,7 +38,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.activity_manager();
 
-            (*mgr).register_command.unwrap()(mgr, command.as_ptr()).to_result()
+            (*mgr).register_command.unwrap()(mgr, command.as_ptr()).into_result()
         }
     }
 
@@ -63,7 +63,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.activity_manager();
 
-            (*mgr).register_steam.unwrap()(mgr, steam_game_id).to_result()
+            (*mgr).register_steam.unwrap()(mgr, steam_game_id).into_result()
         }
     }
 
@@ -97,8 +97,9 @@ impl<'d, E> Discord<'d, E> {
         activity: &Activity,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.activity_manager();
@@ -129,8 +130,9 @@ impl<'d, E> Discord<'d, E> {
     /// # Ok(()) }
     /// ```
     pub fn clear_activity(&self, callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>)) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.activity_manager();
@@ -169,8 +171,9 @@ impl<'d, E> Discord<'d, E> {
         reply: RequestReply,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.activity_manager();
@@ -221,8 +224,9 @@ impl<'d, E> Discord<'d, E> {
             content.to_mut().push('\0')
         }
 
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.activity_manager();
@@ -271,8 +275,9 @@ impl<'d, E> Discord<'d, E> {
         user_id: UserID,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.activity_manager();

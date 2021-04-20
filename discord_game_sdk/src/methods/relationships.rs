@@ -21,7 +21,7 @@ impl<E> Discord<'_, E> {
         unsafe {
             let mgr = self.relationship_manager();
 
-            (*mgr).get.unwrap()(mgr, user_id, &mut relationship.0).to_result()?;
+            (*mgr).get.unwrap()(mgr, user_id, &mut relationship.0).into_result()?;
         }
 
         Ok(relationship)
@@ -81,7 +81,7 @@ impl<E> Discord<'_, E> {
         unsafe {
             let mgr = self.relationship_manager();
 
-            (*mgr).count.unwrap()(mgr, &mut count).to_result()?;
+            (*mgr).count.unwrap()(mgr, &mut count).into_result()?;
         }
 
         // XXX: i32 should be u32
@@ -102,7 +102,7 @@ impl<E> Discord<'_, E> {
         unsafe {
             let mgr = self.relationship_manager();
 
-            (*mgr).get_at.unwrap()(mgr, index, &mut relationship.0).to_result()?;
+            (*mgr).get_at.unwrap()(mgr, index, &mut relationship.0).into_result()?;
         }
 
         Ok(relationship)

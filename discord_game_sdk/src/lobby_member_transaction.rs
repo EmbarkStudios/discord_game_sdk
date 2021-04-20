@@ -68,7 +68,7 @@ impl LobbyMemberTransaction {
                         // XXX: *mut should be *const
                         value.as_ptr() as *mut u8,
                     )
-                    .to_result()?;
+                    .into_result()?;
                 }
                 None => {
                     (*tx).delete_metadata.unwrap()(
@@ -76,7 +76,7 @@ impl LobbyMemberTransaction {
                         // XXX: *mut should be *const
                         key.as_ptr() as *mut u8,
                     )
-                    .to_result()?;
+                    .into_result()?;
                 }
             }
         }

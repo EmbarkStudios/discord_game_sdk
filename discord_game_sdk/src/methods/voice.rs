@@ -20,7 +20,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.voice_manager();
 
-            (*mgr).get_input_mode.unwrap()(mgr, &mut input_mode.0).to_result()?;
+            (*mgr).get_input_mode.unwrap()(mgr, &mut input_mode.0).into_result()?;
         }
 
         Ok(input_mode)
@@ -48,8 +48,9 @@ impl<'d, E> Discord<'d, E> {
         input_mode: InputMode,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.voice_manager();
@@ -76,7 +77,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.voice_manager();
 
-            (*mgr).is_self_mute.unwrap()(mgr, &mut muted).to_result()?;
+            (*mgr).is_self_mute.unwrap()(mgr, &mut muted).into_result()?;
         }
 
         Ok(muted)
@@ -100,7 +101,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.voice_manager();
 
-            (*mgr).is_self_deaf.unwrap()(mgr, &mut deafened).to_result()?;
+            (*mgr).is_self_deaf.unwrap()(mgr, &mut deafened).into_result()?;
         }
 
         Ok(deafened)
@@ -120,7 +121,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.voice_manager();
 
-            (*mgr).set_self_mute.unwrap()(mgr, muted).to_result()
+            (*mgr).set_self_mute.unwrap()(mgr, muted).into_result()
         }
     }
 
@@ -138,7 +139,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.voice_manager();
 
-            (*mgr).set_self_deaf.unwrap()(mgr, deafened).to_result()
+            (*mgr).set_self_deaf.unwrap()(mgr, deafened).into_result()
         }
     }
 
@@ -160,7 +161,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.voice_manager();
 
-            (*mgr).is_local_mute.unwrap()(mgr, user_id, &mut muted).to_result()?;
+            (*mgr).is_local_mute.unwrap()(mgr, user_id, &mut muted).into_result()?;
         }
 
         Ok(muted)
@@ -182,7 +183,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.voice_manager();
 
-            (*mgr).get_local_volume.unwrap()(mgr, user_id, &mut volume).to_result()?;
+            (*mgr).get_local_volume.unwrap()(mgr, user_id, &mut volume).into_result()?;
         }
 
         debug_assert!((0..=200).contains(&volume));
@@ -204,7 +205,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.voice_manager();
 
-            (*mgr).set_local_mute.unwrap()(mgr, user_id, muted).to_result()
+            (*mgr).set_local_mute.unwrap()(mgr, user_id, muted).into_result()
         }
     }
 
@@ -226,7 +227,7 @@ impl<'d, E> Discord<'d, E> {
         unsafe {
             let mgr = self.voice_manager();
 
-            (*mgr).set_local_volume.unwrap()(mgr, user_id, volume).to_result()
+            (*mgr).set_local_volume.unwrap()(mgr, user_id, volume).into_result()
         }
     }
 }

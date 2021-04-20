@@ -83,8 +83,9 @@ impl<'d, E> Discord<'d, E> {
         opened: bool,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.overlay_manager();
@@ -113,8 +114,9 @@ impl<'d, E> Discord<'d, E> {
         action: Action,
         callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>),
     ) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.overlay_manager();
@@ -155,8 +157,9 @@ impl<'d, E> Discord<'d, E> {
             code.to_mut().push('\0')
         }
 
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.overlay_manager();
@@ -182,8 +185,9 @@ impl<'d, E> Discord<'d, E> {
     /// # Ok(()) }
     /// ```
     pub fn open_voice_settings(&self, callback: impl 'd + FnOnce(&Discord<'d, E>, Result<()>)) {
-        let (ptr, fun) = self
-            .one_param(move |discord, res: sys::EDiscordResult| callback(discord, res.to_result()));
+        let (ptr, fun) = self.one_param(move |discord, res: sys::EDiscordResult| {
+            callback(discord, res.into_result())
+        });
 
         unsafe {
             let mgr = self.overlay_manager();

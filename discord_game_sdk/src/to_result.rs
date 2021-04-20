@@ -1,11 +1,11 @@
 use crate::{sys, Error, Result};
 
 pub(crate) trait ToResult: Sized {
-    fn to_result(self) -> Result<()>;
+    fn into_result(self) -> Result<()>;
 }
 
 impl ToResult for sys::EDiscordResult {
-    fn to_result(self) -> Result<()> {
+    fn into_result(self) -> Result<()> {
         use Error::*;
 
         Err(match self {
