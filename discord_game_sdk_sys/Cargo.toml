@@ -9,14 +9,3 @@ repository = "https://github.com/ldesgoui/discord_game_sdk"
 keywords = ["discord", "sdk", "gamedev"]
 categories = ["external-ffi-bindings", "game-engines"]
 readme = "README.md"
-build = "build.rs"
-
-[package.metadata.docs.rs]
-features = ["private-docs-rs"]
-
-[features]
-link = []
-private-docs-rs = [] # DO NOT RELY ON THIS
-
-[build-dependencies]
-bindgen = { version = "0.54", default-features = false, features = ["runtime"] }

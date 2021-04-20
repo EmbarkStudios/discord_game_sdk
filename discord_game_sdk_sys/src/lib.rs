@@ -90,7 +90,8 @@ pub(crate) mod ctypes {
     pub(crate) use std::os::raw::{c_uchar as c_char, *};
 }
 
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+mod bindings;
+pub use bindings::*;
 
 // `bindgen` knows how to automatically implement PartialEq when it can't be derived
 // but it won't automatically implement Eq, so we do
